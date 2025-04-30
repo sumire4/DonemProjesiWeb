@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:rss_dart/dart_rss.dart';
-import 'ekranlar/haberDetayEkrani.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'dart:convert';
+
 
 class HaberEkrani extends StatefulWidget {
   const HaberEkrani({Key? key}) : super(key: key);
@@ -21,33 +22,37 @@ class _HaberEkraniState extends State<HaberEkrani> {
     _haberler = fetchHaberler();
   }
 
+  
+
   Future<List<Map<String, String>>> fetchHaberler() async {
-    // Test için örnek veriler
-    await Future.delayed(Duration(seconds: 1)); // Simüle edilmiş ağ gecikmesi
-    
-    return [
-      {
-        'title': 'Alonso\'dan Verstappen\'e övgüler: "Bana 2012\'yi hatırlatıyor"',
-        'description': 'Suzuka\'da pole pozisyonunu kazanan ve ardından kariyerinin 64. yarış zaferine ulaşan Verstappen\'in performansı, İspanyol pilottan büyük övgü aldı.',
-        'pubDate': '8 Nisan 2024',
-        'imageUrl': 'https://cdn-1.motorsport.com/images/amp/Y99JQRbY/s1000/max-verstappen-red-bull-racing.jpg',
-        'link': 'https://tr.motorsport.com/f1/news/alonsodan-verstappene-ovguler-bana-2012yi-hatirlatiyor/10710956/'
-      },
-      {
-        'title': 'Norris: "Red Bull, yavaş virajlarda bizden daha hızlı"',
-        'description': 'McLaren pilotu, Suzuka\'daki performanslarını değerlendirdi.',
-        'pubDate': '8 Nisan 2024',
-        'imageUrl': 'https://cdn-1.motorsport.com/images/amp/2jXZgDx0/s1000/lando-norris-mclaren-1.jpg',
-        'link': 'https://tr.motorsport.com/f1/news/norris-red-bull-yavas-virajlarda-bizden-daha-hizli/10710953/'
-      },
-      {
-        'title': 'Verstappen: "Araçtaki sorunlar henüz çözülmedi"',
-        'description': 'Red Bull pilotu, Suzuka\'daki zaferinin ardından konuştu.',
-        'pubDate': '8 Nisan 2024',
-        'imageUrl': 'https://cdn-1.motorsport.com/images/amp/0RrGWmM0/s1000/max-verstappen-red-bull-racing.jpg',
-        'link': 'https://tr.motorsport.com/f1/news/verstappen-aractaki-sorunlar-henuz-cozulmedi/10710947/'
-      }
-    ];
+  final url = Uri.parse('https://api.allorigins.win/get?url=${Uri.encodeComponent('https://tr.motorsport.com/rss/f1/news/')}');
+  final response = await http.get(url);
+
+  if (response.statusCode == 200) {
+    final data = utf8.decode(response.bodyBytes);
+    final Map<String, dynamic> jsonData = jsonDecode(data);
+    final rssString = jsonData['contents'];
+
+    final rssFeed = RssFeed.parse(rssString);
+
+    return rssFeed.items.map((item) {
+      final imageUrl = item.enclosure?.url ?? ''; // ✔️ Enclosure'dan resim al
+      return {
+        'title': item.title ?? '',
+        'description': _cleanHtmlTags(item.description ?? ''),
+        'pubDate': item.pubDate ?? '',
+        'imageUrl': imageUrl,
+        'link': item.link ?? '',
+      };
+    }).toList();
+  } else {
+    throw Exception('RSS verisi alınamadı. Hata kodu: ${response.statusCode}');
+  }
+}
+
+  
+  String _cleanHtmlTags(String htmlString) {
+    return htmlString.replaceAll(RegExp(r'<[^>]*>'), '').trim();
   }
 
   @override
@@ -90,12 +95,13 @@ class _HaberEkraniState extends State<HaberEkrani> {
 
             return GridView.builder(
               padding: const EdgeInsets.all(8),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.8,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-              ),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: MediaQuery.of(context).size.width > 600 ? 3 : 2,
+                childAspectRatio: MediaQuery.of(context).size.width > 600 ? 0.75 : 0.6,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+            ),
+
               itemCount: haberler.length,
               itemBuilder: (context, index) {
                 final haber = haberler[index];
@@ -116,16 +122,14 @@ class _HaberEkraniState extends State<HaberEkrani> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (haber['imageUrl'] != null)
-                          Container(
-                            height: 120,
+                        if (haber['imageUrl'] != null && haber['imageUrl']!.isNotEmpty)
+                          SizedBox(
+                            height: 250,
                             width: double.infinity,
                             child: CachedNetworkImage(
                               imageUrl: haber['imageUrl']!,
                               fit: BoxFit.cover,
-                              placeholder: (context, url) => const Center(
-                                child: CircularProgressIndicator(),
-                              ),
+                              placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
                               errorWidget: (context, url, error) => Container(
                                 color: Colors.grey[300],
                                 child: const Icon(Icons.error),
@@ -139,26 +143,25 @@ class _HaberEkraniState extends State<HaberEkrani> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  haber['title'] ?? 'Başlık Yok',
+                                  haber['title'] ?? '',
                                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 13,
+                                    fontSize: 20,
                                   ),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 4),
-                                if (haber['description'] != null)
-                                  Expanded(
-                                    child: Text(
-                                      haber['description']!,
-                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        fontSize: 11,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
+                                Expanded(
+                                  child: Text(
+                                    haber['description'] ?? '',
+                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      fontSize: 14,
                                     ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
+                                ),
                                 Text(
                                   haber['pubDate'] ?? '',
                                   style: Theme.of(context).textTheme.bodySmall?.copyWith(

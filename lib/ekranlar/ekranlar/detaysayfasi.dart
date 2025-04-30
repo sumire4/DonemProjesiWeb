@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../models/pilot_model.dart';
 import '../../models/yaris_model.dart';
-import '../../utils/pilot_resimleri.dart';
-import '../../utils/takim_logolari.dart';
-import 'package:flutter/material.dart';
-import '../../models/yaris_model.dart'; // PilotSonuc buradan geliyor
 
 class DetaySayfasi extends StatelessWidget {
   final List<PilotSonuc> pilotlar;

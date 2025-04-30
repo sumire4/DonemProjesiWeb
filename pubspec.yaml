@@ -46,6 +46,8 @@ dependencies:
   rss_dart: ^1.0.6
   url_launcher: ^6.0.9
   flutter_html: ^3.0.0
+  google_generative_ai:
+  flutter_dotenv:
 
 dev_dependencies:
   flutter_test:

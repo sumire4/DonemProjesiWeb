@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'kayitEkrani.dart';
 import 'ekranlar/hesabimEkrani.dart';
 
 class GirisEkrani extends StatefulWidget {
@@ -139,11 +139,12 @@ class _GirisEkraniState extends State<GirisEkrani> {
               // Kayıt Ol Butonu (isteğe bağlı)
               TextButton(
                 onPressed: () {
-                  // Kayıt ekranına yönlendirme (isteğe bağlı)
-                  print('Kayıt ekranına git');
-                  // Navigator.push(...);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => KayitEkrani()),
+                  );
                 },
-                child: Text('Hesabınız yok mu? Kayıt olun'),
+                 child: Text('Hesabınız yok mu? Kayıt olun'),
               ),
 
               // Şifremi Unuttum Butonu (isteğe bağlı)

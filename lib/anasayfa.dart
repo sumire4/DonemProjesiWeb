@@ -1,7 +1,7 @@
 import 'package:donemprojesi/ekranlar/ekranlar/gecmisYarislarSayfasi.dart';
 import 'package:flutter/material.dart';
 import 'ekranlar/ekranlar/hesabimEkrani.dart';
-import 'ekranlar/girişEkrani.dart';
+import 'ekranlar/girisEkrani.dart';
 import 'ekranlar/haberEkrani.dart';
 import 'ekranlar/ekranlar/briefEkrani.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _widgetOptions = <Widget>[
     HaberEkrani(), // Haberler (index 0)
     GecmisYarislarSayfasi(),
-    Briefekrani(),
+    BriefEkrani(),
     const Center(child: Text('Hesap')), // Hesap (index 3) - Giriş ekranına yönlendiriliyor
   ];
 
@@ -63,11 +63,11 @@ class _HomePageState extends State<HomePage> {
         case 0:
           return "Haberler";
         case 1:
-          return "Skorlar";
+          return "Puan Durumu";
         case 2:
-          return "AI";
+          return "Yapay Zeka";
         case 3:
-          return "Hesap";
+          return "Profil";
         default:
           return "Haberler";
       }
@@ -101,15 +101,15 @@ class _HomePageState extends State<HomePage> {
                       ),
                       NavigationRailDestination(
                         icon: Icon(Icons.sports_score),
-                        label: Text('Skor'),
+                        label: Text('Puan Durumu'),
                       ),
                       NavigationRailDestination(
                         icon: Icon(Icons.auto_awesome),
-                        label: Text('AI'),
+                        label: Text('Yapay Zeka'),
                       ),
                       NavigationRailDestination(
                         icon: Icon(Icons.person),
-                        label: Text('Hesap'),
+                        label: Text('Profil'),
                       ),
                     ],
                   ),
@@ -128,9 +128,9 @@ class _HomePageState extends State<HomePage> {
               height: 60,
               destinations: const [
                 NavigationDestination(icon: Icon(Icons.article), label: "Haber"),
-                NavigationDestination(icon: Icon(Icons.sports_score), label: "Skor"),
-                NavigationDestination(icon: Icon(Icons.auto_awesome), label: "AI"),
-                NavigationDestination(icon: Icon(Icons.person), label: "Hesap"),
+                NavigationDestination(icon: Icon(Icons.sports_score), label: "Puan Durumu"),
+                NavigationDestination(icon: Icon(Icons.auto_awesome), label: "Yapay Zeka"),
+                NavigationDestination(icon: Icon(Icons.person), label: "Profil"),
               ],
               selectedIndex: _selectedIndex,
               onDestinationSelected: _onItemTapped,
