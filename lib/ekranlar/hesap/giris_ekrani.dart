@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'kayitEkrani.dart';
-import 'ekranlar/hesabimEkrani.dart';
+import 'kayit_ekrani.dart';
+import 'hesabim_ekrani.dart';
 
 class GirisEkrani extends StatefulWidget {
+  const GirisEkrani({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _GirisEkraniState createState() => _GirisEkraniState();
 }
 // Boş Sayfa Widget'ı
 class HesapBilgi extends StatelessWidget {
+  const HesapBilgi({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,6 +47,7 @@ class _GirisEkraniState extends State<GirisEkrani> {
       );
       // Giriş başarılı olduğunda direkt olarak Profil sayfasına yönlendir
       Navigator.pushReplacement(
+        // ignore: use_build_context_synchronously
         context,
         MaterialPageRoute(builder: (context) => HesabimEkrani()), // Hesap ekranına yönlendir
       );
@@ -49,11 +55,13 @@ class _GirisEkraniState extends State<GirisEkrani> {
       setState(() {
         _errorMessage = _handleFirebaseAuthError(e.code);
       });
+      // ignore: avoid_print
       print('Giriş hatası: ${e.message}');
     } catch (e) {
       setState(() {
         _errorMessage = 'Beklenmedik bir hata oluştu.';
       });
+      // ignore: avoid_print
       print('Beklenmedik hata: $e');
     } finally {
       setState(() {
@@ -151,6 +159,7 @@ class _GirisEkraniState extends State<GirisEkrani> {
               TextButton(
                 onPressed: () {
                   // Şifremi unuttum ekranına yönlendirme (isteğe bağlı)
+                  // ignore: avoid_print
                   print('Şifremi unuttum');
                   // Navigator.push(...);
                 },

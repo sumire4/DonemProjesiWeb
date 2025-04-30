@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class KayitEkrani extends StatefulWidget {
+  const KayitEkrani({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _KayitEkraniState createState() => _KayitEkraniState();
 }
 
@@ -26,6 +29,7 @@ class _KayitEkraniState extends State<KayitEkrani> {
       );
 
       // Kayıt başarılı -> Giriş ekranına yönlendir
+      // ignore: use_build_context_synchronously
       Navigator.pop(context); // Giriş ekranına geri dön
     } on FirebaseAuthException catch (e) {
       setState(() {

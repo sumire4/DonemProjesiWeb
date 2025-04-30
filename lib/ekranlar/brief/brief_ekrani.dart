@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:donemprojesi/ekranlar/chat_message.dart';
-import 'package:donemprojesi/ekranlar/chat_bubble.dart';
+import 'package:donemprojesi/ekranlar/brief/chat_message.dart';
+import 'package:donemprojesi/ekranlar/brief/chat_bubble.dart';
 
 class BriefEkrani extends StatefulWidget {
+  const BriefEkrani({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _BriefEkraniState createState() => _BriefEkraniState();
 }
 
 class _BriefEkraniState extends State<BriefEkrani> {
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  List<ChatMessage> _messages = [];
+  final List<ChatMessage> _messages = [];
   late GenerativeModel _model;
   bool _isLoading = false;
   
@@ -32,9 +35,7 @@ class _BriefEkraniState extends State<BriefEkrani> {
 
     try {
       _model = GenerativeModel(model: 'gemini-2.5-pro-exp-03-25', apiKey: apiKey);
-      print("Gemini API başarıyla başlatıldı!");
     } catch (e) {
-      print("Gemini API başlatılamadı: $e");
       setState(() {
         _messages.add(ChatMessage(text: 'API başlatılamadı: $e', isUser: false));
       });
@@ -65,6 +66,7 @@ class _BriefEkraniState extends State<BriefEkrani> {
             }
           }
         } catch (e) {
+          // ignore: avoid_print
           print("Yanıt işlenirken hata oluştu: $e");
         }
 

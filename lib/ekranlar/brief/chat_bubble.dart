@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:donemprojesi/ekranlar/chat_message.dart';
+import 'package:donemprojesi/ekranlar/brief/chat_message.dart';
 class ChatBubble extends StatelessWidget {
   final ChatMessage message;
 
-  const ChatBubble({Key? key, required this.message}) : super(key: key);
+  const ChatBubble({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {

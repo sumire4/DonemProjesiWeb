@@ -1,15 +1,16 @@
-import 'package:donemprojesi/ekranlar/ekranlar/gecmisYarislarSayfasi.dart';
+import 'package:donemprojesi/ekranlar/puandurum/gecmis_yarislar_sayfasi.dart';
 import 'package:flutter/material.dart';
-import 'ekranlar/ekranlar/hesabimEkrani.dart';
-import 'ekranlar/girisEkrani.dart';
-import 'ekranlar/haberEkrani.dart';
-import 'ekranlar/ekranlar/briefEkrani.dart';
+import 'hesap/hesabim_ekrani.dart';
+import 'hesap/giris_ekrani.dart';
+import 'haber/haber_ekrani.dart';
+import 'brief/brief_ekrani.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _HomePageState createState() => _HomePageState();
 }
 
@@ -58,7 +59,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final isSmallScreen = MediaQuery.of(context).size.width < 600;
     
-    String _getTitle() {
+    String getTitle() {
       switch (_selectedIndex) {
         case 0:
           return "Haberler";
@@ -84,7 +85,7 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   alignment: Alignment.center,
                   child: Text(
-                    _getTitle(),
+                    getTitle(),
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),

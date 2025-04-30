@@ -7,7 +7,7 @@ import 'dart:convert';
 
 
 class HaberEkrani extends StatefulWidget {
-  const HaberEkrani({Key? key}) : super(key: key);
+  const HaberEkrani({super.key});
 
   @override
   State<HaberEkrani> createState() => _HaberEkraniState();

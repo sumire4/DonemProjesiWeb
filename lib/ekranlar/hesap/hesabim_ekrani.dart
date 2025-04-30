@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../girisEkrani.dart';
+import 'giris_ekrani.dart';
 
 class HesabimEkrani extends StatelessWidget {
+  const HesabimEkrani({super.key});
+
   @override
   Widget build(BuildContext context) {
     final User? user = FirebaseAuth.instance.currentUser;
@@ -25,6 +27,7 @@ class HesabimEkrani extends StatelessWidget {
                   await FirebaseAuth.instance.signOut();
                   // Sayfayı yeniden yükle
                   Navigator.pushReplacement(
+                    // ignore: use_build_context_synchronously
                     context,
                     MaterialPageRoute(builder: (context) => HesabimEkrani()),
                   );

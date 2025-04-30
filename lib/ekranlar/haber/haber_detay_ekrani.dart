@@ -6,7 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 class HaberDetayEkrani extends StatelessWidget {
   final RssItem haber;
 
-  const HaberDetayEkrani({Key? key, required this.haber}) : super(key: key);
+  const HaberDetayEkrani({super.key, required this.haber});
 
   @override
   Widget build(BuildContext context) {
