@@ -31,7 +31,7 @@ class _BriefEkraniState extends State<BriefEkrani> {
   }
 
   void _initializeModel() {
-    const apiKey = 'deneme';
+    const apiKey = 'AIzaSyD8FLkRCHX1MH_WssJIQLKKLwHQYouoDio';
 
     try {
       _model = GenerativeModel(model: 'gemini-2.5-pro-exp-03-25', apiKey: apiKey);
@@ -45,11 +45,11 @@ class _BriefEkraniState extends State<BriefEkrani> {
   Future<void> _getInitialF1Prediction() async {
     setState(() {
       _isLoading = true;
-      _messages.add(ChatMessage(text: 'F1 tahminleri alınıyor...', isUser: false));
+      _messages.add(ChatMessage(text: 'Analiz Ediliyor...', isUser: false));
     });
 
     try {
-      final response = await _model.generateContent([Content.text('Önümüzdeki Formula 1 yarışı için bir sıralama tahmini yapar mısın? Nedenlerini kısaca açıkla.(uygulama açılınca ilk prompt olacak harika soru vs şeyler yazma, kısaca ilk 5e kim girer ve sence kim kazanır onu söyle.)')]);
+      final response = await _model.generateContent([Content.text('Önümüzdeki Formula 1 yarışı için bir sıralama tahmini yapar mısın? Nedenlerini kısaca açıkla.(uygulama açılınca ilk prompt olacak harika soru vs şeyler yazma, hafif uzunca ilk 5e kim girer ve sence kim kazanır onu söyle.)')]);
 
       setState(() {
         _isLoading = false;

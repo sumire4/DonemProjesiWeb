@@ -49,7 +49,7 @@ class _GirisEkraniState extends State<GirisEkrani> {
       Navigator.pushReplacement(
         // ignore: use_build_context_synchronously
         context,
-        MaterialPageRoute(builder: (context) => HesabimEkrani()), // Hesap ekranına yönlendir
+        MaterialPageRoute(builder: (context) => HesabimEkraniWeb()), // Hesap ekranına yönlendir
       );
     } on FirebaseAuthException catch (e) {
       setState(() {
@@ -90,6 +90,12 @@ class _GirisEkraniState extends State<GirisEkrani> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+    icon: Icon(Icons.arrow_back),
+    onPressed: () {
+      Navigator.pop(context); // Geri git
+    },
+  ),
         title: Text('Giriş Yap'),
         elevation: 0, // AppBar'ın altındaki gölgeyi kaldırır (isteğe bağlı)
       ),

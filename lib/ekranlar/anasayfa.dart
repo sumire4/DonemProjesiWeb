@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
       } else {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => HesabimEkrani()),
+          MaterialPageRoute(builder: (context) => HesabimEkraniWeb()),
         ).then((_) {
           setState(() {
             _selectedIndex = 0; // Profil ekranından çıkınca da ana sayfaya dön
