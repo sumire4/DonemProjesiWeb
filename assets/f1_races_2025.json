@@ -1,0 +1,70 @@
+[
+  {
+    "name": "Monako Grand Prix'si",
+    "race_date": "2025-05-25T16:00:00"
+  },
+  {
+    "name": "İspanya Grand Prix'si",
+    "race_date": "2025-06-01T16:00:00"
+  },
+  {
+    "name": "Kanada Grand Prix'si",
+    "race_date": "2025-06-15T21:00:00"
+  },
+  {
+    "name": "Avusturya Grand Prix'si",
+    "race_date": "2025-06-29T16:00:00"
+  },
+  {
+    "name": "Britanya Grand Prix'si",
+    "race_date": "2025-07-06T17:00:00"
+  },
+  {
+    "name": "Belçika Grand Prix'si",
+    "race_date": "2025-07-27T16:00:00"
+  },
+  {
+    "name": "Macaristan Grand Prix'si",
+    "race_date": "2025-08-03T16:00:00"
+  },
+  {
+    "name": "Hollanda Grand Prix'si",
+    "race_date": "2025-08-31T16:00:00"
+  },
+  {
+    "name": "İtalya Grand Prix'si",
+    "race_date": "2025-09-07T16:00:00"
+  },
+  {
+    "name": "Azerbaycan Grand Prix'si",
+    "race_date": "2025-09-21T14:00:00"
+  },
+  {
+    "name": "Singapur Grand Prix'si",
+    "race_date": "2025-10-05T15:00:00"
+  },
+  {
+    "name": "ABD Grand Prix'si",
+    "race_date": "2025-10-19T22:00:00"
+  },
+  {
+    "name": "Mexico City Grand Prix'si",
+    "race_date": "2025-10-26T23:00:00"
+  },
+  {
+    "name": "Brezilya Grand Prix'si",
+    "race_date": "2025-11-09T20:00:00"
+  },
+  {
+    "name": "Las Vegas Grand Prix'si",
+    "race_date": "2025-11-23T07:00:00"
+  },
+  {
+    "name": "Katar Grand Prix'si",
+    "race_date": "2025-11-30T19:00:00"
+  },
+  {
+    "name": "Abu Dhabi Grand Prix'si",
+    "race_date": "2025-12-07T16:00:00"
+  }
+]

@@ -1,13 +1,40 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:donemprojesi/ekranlar/brief/chat_message.dart';
 import 'package:donemprojesi/ekranlar/brief/chat_bubble.dart';
+import 'package:donemprojesi/services/chat_gpt_service.dart';
+
+class Race {
+  final String name;
+  final DateTime date;
+
+  Race({required this.name, required this.date});
+
+  factory Race.fromJson(Map<String, dynamic> json) {
+    return Race(
+      name: json['name'],
+      date: DateTime.parse(json['race_date']),
+    );
+  }
+}
+
+Future<List<Race>> loadRaces() async {
+  final jsonString = await rootBundle.loadString('assets/f1_races_2025.json');
+  final List<dynamic> jsonList = jsonDecode(jsonString);
+  return jsonList.map((json) => Race.fromJson(json)).toList();
+}
+
+Race findNextRace(List<Race> races) {
+  final now = DateTime.now();
+  races.sort((a, b) => a.date.compareTo(b.date));
+  return races.firstWhere((race) => race.date.isAfter(now));
+}
 
 class BriefEkrani extends StatefulWidget {
   const BriefEkrani({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _BriefEkraniState createState() => _BriefEkraniState();
 }
 
@@ -15,31 +42,19 @@ class _BriefEkraniState extends State<BriefEkrani> {
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final List<ChatMessage> _messages = [];
-  late GenerativeModel _model;
+  late ChatGPTService _chatService;
   bool _isLoading = false;
-  
 
   @override
   void initState() {
     super.initState();
-    _setup();
-  }
-
-  Future<void> _setup() async {
     _initializeModel();
     _getInitialF1Prediction();
   }
 
   void _initializeModel() {
-    const apiKey = 'AIzaSyD8FLkRCHX1MH_WssJIQLKKLwHQYouoDio';
-
-    try {
-      _model = GenerativeModel(model: 'gemini-2.5-pro-exp-03-25', apiKey: apiKey);
-    } catch (e) {
-      setState(() {
-        _messages.add(ChatMessage(text: 'API başlatılamadı: $e', isUser: false));
-      });
-    }
+    const apiKey = 'apikeyim';
+    _chatService = ChatGPTService(apiKey);
   }
 
   Future<void> _getInitialF1Prediction() async {
@@ -49,28 +64,25 @@ class _BriefEkraniState extends State<BriefEkrani> {
     });
 
     try {
-      final response = await _model.generateContent([Content.text('Önümüzdeki Formula 1 yarışı için bir sıralama tahmini yapar mısın? Nedenlerini kısaca açıkla.(uygulama açılınca ilk prompt olacak harika soru vs şeyler yazma, hafif uzunca ilk 5e kim girer ve sence kim kazanır onu söyle.)')]);
+      final races = await loadRaces();
+      final nextRace = findNextRace(races);
+      final today = DateTime.now();
+
+      final prompt = '''
+        Bugünün tarihi: ${today.toIso8601String()}
+
+        Önümüzdeki Formula 1 yarışı: ${nextRace.name}, tarihi: ${nextRace.date.toIso8601String()}
+
+        Lütfen pist koşulları ve hava durumunu dikkate alarak bu yarış için pilot ve takım sıralama tahmini yap ve nedenlerini kısaca açıkla.
+        ilk başa da önümüzdeki yarışın konumu ve tarihini yaz
+        ''';
+
+      final cevap = await _chatService.sendMessage(prompt);
 
       setState(() {
         _isLoading = false;
-        _messages.removeLast(); // "Tahminler alınıyor..." mesajını kaldır
-
-        String? text;
-
-        try {
-          // ignore: unnecessary_null_comparison
-          if (response.candidates != null && response.candidates.isNotEmpty && response.candidates.first.content.parts.isNotEmpty) {
-            final part = response.candidates.first.content.parts.first;
-            if (part is TextPart) {
-              text = part.text;
-            }
-          }
-        } catch (e) {
-          // ignore: avoid_print
-          print("Yanıt işlenirken hata oluştu: $e");
-        }
-
-        _messages.add(ChatMessage(text: text ?? 'Tahmin alınırken bir hata oluştu veya cevap boş geldi.', isUser: false));
+        _messages.removeLast();
+        _messages.add(ChatMessage(text: cevap, isUser: false));
       });
     } catch (e) {
       setState(() {
@@ -96,16 +108,13 @@ class _BriefEkraniState extends State<BriefEkrani> {
     _scrollToBottom();
 
     try {
-      final response = await _model.generateContent([Content.text(message)]);
+      // İstersen burada da prompt'u güncelleyip yarışı ekleyebilirsin.
+      final cevap = await _chatService.sendMessage(message);
 
       setState(() {
         _isLoading = false;
         _messages.removeLast();
-
-        final firstPart = response.candidates.first.content.parts.first;
-        String? text = (firstPart is TextPart) ? firstPart.text : null;
-
-        _messages.add(ChatMessage(text: text ?? 'Cevap alınırken bir hata oluştu.', isUser: false));
+        _messages.add(ChatMessage(text: cevap, isUser: false));
       });
     } catch (e) {
       setState(() {
@@ -122,7 +131,7 @@ class _BriefEkraniState extends State<BriefEkrani> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     });
@@ -134,12 +143,12 @@ class _BriefEkraniState extends State<BriefEkrani> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue), // Material 3 renk paleti
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.blue.shade800,
-          titleTextStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+          titleTextStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
         ),
-        textTheme: TextTheme(
+        textTheme: const TextTheme(
           bodyLarge: TextStyle(color: Colors.black, fontSize: 16),
         ),
         inputDecorationTheme: InputDecorationTheme(
@@ -149,20 +158,27 @@ class _BriefEkraniState extends State<BriefEkrani> {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue.shade600, // Buton rengi
+            backgroundColor: Colors.blue.shade600,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
         ),
       ),
       home: Scaffold(
         backgroundColor: const Color.fromARGB(17, 33, 33, 37),
-        appBar: AppBar(backgroundColor: const Color.fromRGBO(35, 35, 40, 0.067),
-          title: Text('F1 Tahminleri ve Sohbet',style: TextStyle(color: const Color.fromARGB(255, 245, 242, 242)
-          , fontSize: 20, fontWeight: FontWeight.bold),),
+        appBar: AppBar(
+          backgroundColor: const Color.fromRGBO(35, 35, 40, 0.067),
+          title: const Text(
+            'F1 Tahminleri ve Sohbet',
+            style: TextStyle(
+              color: Color.fromARGB(255, 245, 242, 242),
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
         body: Center(
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: 800),
+            constraints: const BoxConstraints(maxWidth: 800),
             child: Column(
               children: <Widget>[
                 Expanded(
@@ -175,7 +191,7 @@ class _BriefEkraniState extends State<BriefEkrani> {
                     },
                   ),
                 ),
-                if (_isLoading) LinearProgressIndicator(),
+                if (_isLoading) const LinearProgressIndicator(),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -184,17 +200,17 @@ class _BriefEkraniState extends State<BriefEkrani> {
                         child: TextField(
                           controller: _textController,
                           decoration: InputDecoration(
-                            hintText: 'Gemini\'ye soru sorun...',
-                            hintStyle: TextStyle(color: Colors.grey[400]), // ipucu rengi
+                            hintText: 'ChatGPT\'ye soru sorun...',
+                            hintStyle: TextStyle(color: Colors.grey[400]),
                             filled: true,
-                            fillColor: const Color.fromARGB(17, 54, 54, 58), // arka plan rengi
+                            fillColor: const Color.fromARGB(17, 54, 54, 58),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide.none,
                             ),
-                            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                           ),
-                          style: TextStyle(color: Colors.white), // yazı rengi
+                          style: const TextStyle(color: Colors.white),
                           onSubmitted: (value) {
                             if (value.trim().isNotEmpty) {
                               _sendMessage(value.trim());
@@ -202,7 +218,7 @@ class _BriefEkraniState extends State<BriefEkrani> {
                           },
                         ),
                       ),
-                      SizedBox(width: 8.0),
+                      const SizedBox(width: 8.0),
                       ElevatedButton(
                         onPressed: () {
                           if (_textController.text.trim().isNotEmpty) {
@@ -210,20 +226,19 @@ class _BriefEkraniState extends State<BriefEkrani> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(117, 101, 101, 117), // buton arka plan rengi
-                          foregroundColor: Colors.white, // buton yazı rengi
-                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                          minimumSize: Size(120, 55), // genişlik ve yükseklik ayarı
+                          backgroundColor: const Color.fromARGB(117, 101, 101, 117),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                          minimumSize: const Size(120, 55),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Gönder',
                           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                         ),
                       ),
-
                     ],
                   ),
                 ),
