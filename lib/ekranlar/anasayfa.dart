@@ -1,4 +1,4 @@
-import 'package:donemprojesi/ekranlar/puandurum/gecmis_yarislar_sayfasi.dart';
+import 'package:donemprojesi/ekranlar/puandurum/standings_ekrani.dart';
 import 'package:flutter/material.dart';
 import 'hesap/hesabim_ekrani.dart';
 import 'hesap/giris_ekrani.dart';
@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _widgetOptions = <Widget>[
     HaberEkrani(), // Haberler (index 0)
-    GecmisYarislarSayfasi(),
+    StandingsEkrani(),
     BriefEkrani(),
     const Center(child: Text('Hesap')), // Hesap (index 3) - Giriş ekranına yönlendiriliyor
   ];
@@ -91,27 +91,39 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Expanded(
                   child: NavigationRail(
-                    extended: MediaQuery.of(context).size.width >= 800,
-                    backgroundColor: Theme.of(context).colorScheme.surface,
-                    selectedIndex: _selectedIndex,
-                    onDestinationSelected: _onItemTapped,
-                    destinations: const [
-                      NavigationRailDestination(
-                        icon: Icon(Icons.article),
-                        label: Text('Haber'),
+                  extended: MediaQuery.of(context).size.width >= 1300,
+                  backgroundColor: Theme.of(context).colorScheme.surface,
+                  selectedIndex: _selectedIndex,
+                  onDestinationSelected: _onItemTapped,
+                  destinations: const [
+                    NavigationRailDestination(
+                      icon: Icon(Icons.article, size:  25),
+                      label: Text(
+                        'Haber',
+                        style: TextStyle(fontSize: 16),
                       ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.sports_score),
-                        label: Text('Puan Durumu'),
+                    ),
+                       NavigationRailDestination(
+                      icon: Icon(Icons.sports_score, size:  25),
+                      label: Text(
+                        'Puan Durumu',
+                        style: TextStyle(fontSize: 16),
                       ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.auto_awesome),
-                        label: Text('Yapay Zeka'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.auto_awesome, size:  25),
+                      label: Text(
+                        'Yapay Zeka',
+                        style: TextStyle(fontSize: 16),
                       ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.person),
-                        label: Text('Profil'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.person, size:  25),
+                      label: Text(
+                        'Profil ',
+                        style: TextStyle(fontSize: 16),
                       ),
+                    ),
                     ],
                   ),
                 ),

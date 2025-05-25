@@ -7,25 +7,7 @@ class GirisEkrani extends StatefulWidget {
   const GirisEkrani({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _GirisEkraniState createState() => _GirisEkraniState();
-}
-// Boş Sayfa Widget'ı
-class HesapBilgi extends StatelessWidget {
-  const HesapBilgi({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Başarılı Giriş'),
-        automaticallyImplyLeading: false, // Geri butonunu kaldırır
-      ),
-      body: Center(
-        child: Text('Giriş başarılı! Hoş geldiniz!'),
-      ),
-    );
-  }
 }
 
 class _GirisEkraniState extends State<GirisEkrani> {
@@ -45,31 +27,24 @@ class _GirisEkraniState extends State<GirisEkrani> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      // Giriş başarılı olduğunda direkt olarak Profil sayfasına yönlendir
       Navigator.pushReplacement(
-        // ignore: use_build_context_synchronously
         context,
-        MaterialPageRoute(builder: (context) => HesabimEkraniWeb()), // Hesap ekranına yönlendir
+        MaterialPageRoute(builder: (context) => HesabimEkraniWeb()),
       );
     } on FirebaseAuthException catch (e) {
       setState(() {
         _errorMessage = _handleFirebaseAuthError(e.code);
       });
-      // ignore: avoid_print
-      print('Giriş hatası: ${e.message}');
     } catch (e) {
       setState(() {
         _errorMessage = 'Beklenmedik bir hata oluştu.';
       });
-      // ignore: avoid_print
-      print('Beklenmedik hata: $e');
     } finally {
       setState(() {
         _isLoading = false;
       });
     }
   }
-
 
   String _handleFirebaseAuthError(String errorCode) {
     switch (errorCode) {
@@ -88,90 +63,124 @@ class _GirisEkraniState extends State<GirisEkrani> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-    icon: Icon(Icons.arrow_back),
-    onPressed: () {
-      Navigator.pop(context); // Geri git
-    },
-  ),
+        leading: BackButton(),
         title: Text('Giriş Yap'),
-        elevation: 0, // AppBar'ın altındaki gölgeyi kaldırır (isteğe bağlı)
+        elevation: 0,
       ),
       body: Center(
-        child: SingleChildScrollView( // Klavye açıldığında taşmayı önler
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              // E-posta TextField
-              TextFormField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  labelText: 'E-posta',
-                  border: OutlineInputBorder(), // Çerçeveli görünüm
-                  prefixIcon: Icon(Icons.email), // E-posta ikonu
-                ),
-              ),
-              SizedBox(height: 16.0),
-
-              // Şifre TextField
-              TextFormField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Şifre',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.lock), // Kilit ikonu
-                ),
-              ),
-              SizedBox(height: 24.0),
-
-              // Giriş Yap Butonu
-              ElevatedButton(
-                onPressed: _isLoading ? null : _girisYap, // Yüklenirken devre dışı
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                  textStyle: TextStyle(fontSize: 18),
-                ),
-                child: _isLoading
-                    ? CircularProgressIndicator() // Yüklenirken animasyon
-                    : Text('Giriş Yap'),
-              ),
-              SizedBox(height: 16.0),
-
-              // Hata Mesajı
-              if (_errorMessage.isNotEmpty)
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
                 Text(
-                  _errorMessage,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error), // Tema'dan hata rengini alır
+                  'Merhaba!',
+                  style: textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.primary,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-              SizedBox(height: 16.0),
+                const SizedBox(height: 8),
+                Text(
+                  'Lütfen hesabınıza giriş yapın',
+                  style: textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 32),
 
-              // Kayıt Ol Butonu (isteğe bağlı)
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => KayitEkrani()),
-                  );
-                },
-                 child: Text('Hesabınız yok mu? Kayıt olun'),
-              ),
+                // E-posta alanı
+                TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  autofillHints: const [AutofillHints.email],
+                  decoration: InputDecoration(
+                    labelText: 'E-posta',
+                    prefixIcon: const Icon(Icons.email_outlined),
+                    filled: true,
+                    fillColor: colorScheme.surfaceVariant,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
 
-              // Şifremi Unuttum Butonu (isteğe bağlı)
-              TextButton(
-                onPressed: () {
-                  // Şifremi unuttum ekranına yönlendirme (isteğe bağlı)
-                  // ignore: avoid_print
-                  print('Şifremi unuttum');
-                  // Navigator.push(...);
-                },
-                child: Text('Şifremi unuttum'),
-              ),
-            ],
+                // Şifre alanı
+                TextFormField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  autofillHints: const [AutofillHints.password],
+                  decoration: InputDecoration(
+                    labelText: 'Şifre',
+                    prefixIcon: const Icon(Icons.lock_outline),
+                    filled: true,
+                    fillColor: colorScheme.surfaceVariant,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Hata mesajı
+                if (_errorMessage.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Text(
+                      _errorMessage,
+                      style: TextStyle(
+                        color: colorScheme.error,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+
+                // Giriş butonu - Material 3 FilledButton
+                FilledButton.tonal(
+                  onPressed: _isLoading ? null : _girisYap,
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(strokeWidth: 3),
+                        )
+                      : const Text('Giriş Yap', style: TextStyle(fontSize: 18)),
+                ),
+                const SizedBox(height: 16),
+
+                // Kayıt ol butonu - OutlinedButton
+                OutlinedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => KayitEkrani()),
+                    );
+                  },
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: const Text('Hesabınız yok mu? Kayıt olun', style: TextStyle(fontSize: 16)),
+                ),
+
+                const SizedBox(height: 8),
+              ],
+            ),
           ),
         ),
       ),

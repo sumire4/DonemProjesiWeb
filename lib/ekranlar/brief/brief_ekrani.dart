@@ -53,7 +53,7 @@ class _BriefEkraniState extends State<BriefEkrani> {
   }
 
   void _initializeModel() {
-    const apiKey = 'apikeyim';
+    const apiKey = ' ';
     _chatService = ChatGPTService(apiKey);
   }
 
@@ -73,7 +73,7 @@ class _BriefEkraniState extends State<BriefEkrani> {
 
         Önümüzdeki Formula 1 yarışı: ${nextRace.name}, tarihi: ${nextRace.date.toIso8601String()}
 
-        Lütfen pist koşulları ve hava durumunu dikkate alarak bu yarış için pilot ve takım sıralama tahmini yap ve nedenlerini kısaca açıkla.
+        Lütfen pist koşulları ve hava durumunu dikkate alarak bu yarış için pilot ve takım sıralama tahmini yap ve nedenlerini detaylı bir şekilde ayrıntılı olarak açıkla.
         ilk başa da önümüzdeki yarışın konumu ve tarihini yaz
         ''';
 

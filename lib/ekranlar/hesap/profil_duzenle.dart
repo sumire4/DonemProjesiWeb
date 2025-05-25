@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:donemprojesi/ekranlar/brief/brief_ekrani.dart';
+import 'package:donemprojesi/ekranlar/hesap/sifre_degisim_ekrani.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -110,7 +111,7 @@ class _ProfilDuzenleWebEkraniState extends State<ProfilDuzenleWebEkrani> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => BriefEkrani()),
+                        MaterialPageRoute(builder: (context) => SifreDegisimEkrani()),
                       );
                     },
                     icon: Icon(Icons.lock),

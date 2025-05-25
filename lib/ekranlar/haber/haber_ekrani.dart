@@ -148,7 +148,7 @@ class _HaberEkraniState extends State<HaberEkrani> {
                                     fontWeight: FontWeight.bold,
                                     fontSize: 20,
                                   ),
-                                  maxLines: 2,
+                                  maxLines: 8,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 4),
@@ -158,7 +158,7 @@ class _HaberEkraniState extends State<HaberEkrani> {
                                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                       fontSize: 14,
                                     ),
-                                    maxLines: 2,
+                                    maxLines: 8,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
